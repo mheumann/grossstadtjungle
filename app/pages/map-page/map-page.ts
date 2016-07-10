@@ -14,7 +14,7 @@ export class MapPage {
     constructor() { }
 
     onPageWillEnter() {
-        let options = { timeout: 10000, enableHighAccuracy: true };
+        let options = {timeout: 10000, enableHighAccuracy: true};
 
         this.map = L.map('map', {
             zoom: 13
@@ -22,18 +22,18 @@ export class MapPage {
 
         L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-            maxZoom: 18
+            maxZoom: 19
         }).addTo(this.map);
 
-        navigator.geolocation.watchPosition((curPos) => this.showInitialLocation(curPos), (error) => {
+        navigator.geolocation.getCurrentPosition((curPos) => this.showInitialLocation(curPos), (error) => {
             console.log("Initial position locating failed");
             console.log(error);
         }, options);
 
         this.watchId = navigator.geolocation.watchPosition((curPos) => {
             console.log("View is changing");
-//            this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
-//            this.posMarker.setLatLng(this.latLng);
+            this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
+            this.posMarker.setLatLng(this.latLng);
         }, (error) => {
             console.log(error);
         }, options);
