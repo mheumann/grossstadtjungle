@@ -1,3 +1,8 @@
-#map{
-    height: 100%;
+#map-page {
+    scroll-content {
+        overflow-y: hidden;
+    }
+    #map{
+        height: 100%;
+    }
 }
