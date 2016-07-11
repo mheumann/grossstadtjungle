@@ -1,6 +1,6 @@
-import {Page} from 'ionic-angular';
+import {Page, Nav} from 'ionic-angular';
 import * as L from "leaflet";
-import {Map, LatLng, Marker} from 'leaflet';
+import {Map, LatLng, Marker, Circle} from 'leaflet';
 
 @Page({
     templateUrl: 'build/pages/map-page/map-page.html'
@@ -10,11 +10,12 @@ export class MapPage {
     private latLng: LatLng;
     private watchId: number;
     private posMarker: Marker;
+    private posCircle: Circle;
 
-    constructor() { }
+    constructor(private nav: Nav) { }
 
     onPageWillEnter() {
-        let options = {timeout: 10000, enableHighAccuracy: true};
+        let options = { timeout: 10000, enableHighAccuracy: true };
 
         this.map = L.map('map', {
             zoom: 13
@@ -31,9 +32,10 @@ export class MapPage {
         }, options);
 
         this.watchId = navigator.geolocation.watchPosition((curPos) => {
-            console.log("View is changing");
             this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
             this.posMarker.setLatLng(this.latLng);
+            this.posCircle.setLatLng(this.latLng);
+            this.posCircle.setRadius(curPos.coords.accuracy / 2);
         }, (error) => {
             console.log(error);
         }, options);
@@ -41,10 +43,13 @@ export class MapPage {
 
     showInitialLocation(curPos: Position) {
         this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
-        
-        this.posMarker = L.marker(this.latLng);        
+
+        this.posMarker = L.marker(this.latLng);
         this.posMarker.addTo(this.map);
         
+        this.posCircle = L.circle(this.latLng, curPos.coords.accuracy / 2);
+        this.posCircle.addTo(this.map);
+
         this.map.setView(this.latLng);
     }
 }

@@ -1,6 +1,7 @@
 #map-page {
     scroll-content {
         overflow-y: hidden;
+        will-change: initial;
     }
     #map{
         height: 100%;
