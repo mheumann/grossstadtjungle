@@ -6,7 +6,7 @@ import {QUESTIONS} from '../mock-tour';
 export class QuestionService {
     constructor() { }
     
-    getQuestions(): Question[] {
-        return QUESTIONS;
+    getQuestions(): Promise<Question[]> {
+        return Promise.resolve(QUESTIONS);
     }
 }

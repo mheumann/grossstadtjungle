@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import {Map, Marker, LatLng, Circle} from 'leaflet';
+import {Question} from '../classes/question';
+import {QuestionService} from './question-service';
 
 @Injectable()
 export class MapService {
@@ -9,8 +11,10 @@ export class MapService {
     private watchId: number;
     private posCircle: Circle;
     private posMarker: Marker;
+    private questionMarker: Marker;
 
-    construct() { }
+    constructor(private questionService: QuestionService) {
+    }
 
     startMapService() {
         let options = { timeout: 10000, enableHighAccuracy: true };
@@ -20,30 +24,40 @@ export class MapService {
             maxZoom: 19
         }).addTo(this.map);
 
-        navigator.geolocation.getCurrentPosition((curPos) => this.showInitialLocation(curPos), (error) => {
-            console.log("Initial position locating failed");
-            console.log(error);
-        }, options);
-
-        this.watchId = navigator.geolocation.watchPosition((position) => this.showInitialLocation(position), (error) => {
-            console.log("Watch position failed");
+        this.watchId = navigator.geolocation.watchPosition((position) => this.positionFound(position), (error: PositionError) => {
             console.log(error);
         }, options);
     }
 
-    private showInitialLocation(curPos: Position) {
+    private positionFound(curPos: Position) {
         this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
 
-        this.posMarker = L.marker(this.latLng);
-        this.posMarker.addTo(this.map);
+        this.showPosition(curPos.coords.accuracy / 2);
 
-        this.posCircle = L.circle(this.latLng, curPos.coords.accuracy / 2);
-        this.posCircle.addTo(this.map);
-
-        this.map.setView(this.latLng);
+        this.questionService.getQuestions().then(questions => this.setClosestQuestion(questions));
+        //TODO: Caclulate distance
+        //TODO: Show quiz
     }
 
-    private setPosition() {
+    private showPosition(radius: number) {
+        if (this.posMarker === undefined) {
+            this.posMarker = L.marker(this.latLng);
+            this.posMarker.addTo(this.map);
 
+            this.posCircle = L.circle(this.latLng, radius);
+            this.posCircle.addTo(this.map);
+
+            this.map.setView(this.latLng);
+        }
+        
+        this.posMarker.setLatLng(this.latLng);
+        this.posCircle.setLatLng(this.latLng);
+        this.posCircle.setRadius(radius);
+    }
+
+    private setClosestQuestion(questions: Array<Question>) {
+        
+        this.questionMarker = L.marker(questions[0].latLng);
+        this.questionMarker.addTo(this.map);
     }
 }
