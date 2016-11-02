@@ -3,7 +3,7 @@ import {Question} from '../classes/question';
 import {QUESTIONS} from '../mock-tour';
 
 @Injectable()
-export class QuestionService {
+export class QuestionProvider {
     constructor() { }
     
     getQuestions(): Promise<Question[]> {

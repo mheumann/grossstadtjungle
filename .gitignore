@@ -1,13 +1,7 @@
-# Created by https://www.gitignore.io/api/netbeans,node,typings
+# Created by https://www.gitignore.io/api/netbeans,node
 
 ### NetBeans ###
 nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
-.nb-gradle/
 
 
 ### Node ###
@@ -50,12 +44,12 @@ jspm_packages
 .node_repl_history
 
 
-### Typings ###
-## Ignore downloaded typings
-typings
-
-
 ### Ionic/Cordova ###node_modules/
-www/build/
+.tmp/
+www/assets
+www/build
+www/index.html
+www/*.js*
 platforms/
 plugins/
+bower_components/

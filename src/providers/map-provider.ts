@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import {Map, Marker, LatLng, Circle} from 'leaflet';
 import {Question} from '../classes/question';
-import {QuestionService} from './question-service';
+import {QuestionProvider} from './question-provider';
 
 @Injectable()
-export class MapService {
+export class MapProvider {
     map: Map;
     private latLng: LatLng;
     private watchId: number;
@@ -13,10 +13,10 @@ export class MapService {
     private posMarker: Marker;
     private questionMarker: Marker;
 
-    constructor(private questionService: QuestionService) {
+    constructor(private questionProvider: QuestionProvider) {
     }
 
-    startMapService() {
+    startMapProvider() {
         let options = { timeout: 10000, enableHighAccuracy: true };
 
         L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -30,11 +30,11 @@ export class MapService {
     }
 
     private positionFound(curPos: Position) {
-        this.latLng = new L.LatLng(curPos.coords.latitude, curPos.coords.longitude);
+        this.latLng = L.latLng(curPos.coords.latitude, curPos.coords.longitude);
 
         this.showPosition(curPos.coords.accuracy / 2);
 
-        this.questionService.getQuestions().then(questions => this.setClosestQuestion(questions));
+        this.questionProvider.getQuestions().then(questions => this.setClosestQuestion(questions));
         //TODO: Caclulate distance
         //TODO: Show quiz
     }
@@ -47,7 +47,7 @@ export class MapService {
             this.posCircle = L.circle(this.latLng, radius);
             this.posCircle.addTo(this.map);
 
-            this.map.setView(this.latLng);
+            this.map.setView(this.latLng, 15);
         }
         
         this.posMarker.setLatLng(this.latLng);
