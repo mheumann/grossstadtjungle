@@ -11,6 +11,7 @@ export class MapProvider {
     private posCircle: Circle;
     private posMarker: Marker;
     private questionMarker: Marker;
+    private centering: Boolean;
 
     constructor(private questionProvider: QuestionProvider) {
     }
@@ -23,7 +24,10 @@ export class MapProvider {
             maxZoom: 19
         }).addTo(this.map);
         
-        this.map.locate(options).on('locationfound', this.positionFound);
+        this.map.locate(options)
+        this.map.once('locationfound', this.positionFound);
+        
+        this.map.once('movestart zoomstart', this.stopCentering);
     }
 
     private positionFound = (e: LocationEvent) => {
@@ -55,5 +59,9 @@ export class MapProvider {
     private setClosestQuestion(questions: Array<Question>) {
         this.questionMarker = L.marker(questions[0].latLng);
         this.questionMarker.addTo(this.map);
+    }
+    
+    private stopCentering = () => {
+        this._locateOptions.setView = false;
     }
 }
