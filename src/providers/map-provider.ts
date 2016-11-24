@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import {Map, Marker, LatLng, Circle, LocationEvent} from 'leaflet';
 import {Question} from '../classes/question';
 import {QuestionProvider} from './question-provider';
+import { CenterControl } from '../classes/center-control'
 
 @Injectable()
 export class MapProvider {
@@ -11,27 +12,31 @@ export class MapProvider {
     private posCircle: Circle;
     private posMarker: Marker;
     private questionMarker: Marker;
-    private centering: Boolean;
+    private centering: Boolean = true;
 
-    constructor(private questionProvider: QuestionProvider) {
-    }
+    constructor(private questionProvider: QuestionProvider) {}
 
     public startMapProvider() {
-        let options = {watch: true, setView:true, enableHighAccuracy: true};
+        let options = {watch: true, enableHighAccuracy: true};
+        let centerControl = new CenterControl({position: 'bottomright'});
 
         L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
             maxZoom: 19
         }).addTo(this.map);
         
+        centerControl.addTo(this.map);
+        
         this.map.locate(options)
-        this.map.once('locationfound', this.positionFound);
+        this.map.on('locationfound', this.positionFound);
         
         this.map.once('movestart zoomstart', this.stopCentering);
     }
 
     private positionFound = (e: LocationEvent) => {
         this.latLng = e.latlng;
+        if(this.centering)
+            this.map.setView(this.latLng, 15); 
 
         this.showPosition(e.accuracy / 2);
 
@@ -62,6 +67,6 @@ export class MapProvider {
     }
     
     private stopCentering = () => {
-        this._locateOptions.setView = false;
+        this.centering = false;
     }
 }
