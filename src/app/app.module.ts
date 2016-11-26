@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { IonicApp, IonicModule } from 'ionic-angular';
+import { NgModule, ErrorHandler } from '@angular/core';
+import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map-page/map-page';
 import { MapProvider} from '../providers/map-provider';
@@ -19,6 +19,7 @@ import { QuestionProvider} from '../providers/question-provider';
         MapPage
     ],
     providers: [
+        {provide: ErrorHandler, useClass: IonicErrorHandler},
         MapProvider,
         QuestionProvider
     ]
