@@ -12,9 +12,10 @@ export class MapProvider {
     private posCircle: Circle;
     private posMarker: Marker;
     private questionMarker: Marker;
-    private centering: Boolean = true;
+    private centering: Boolean;
 
-    constructor(private questionProvider: QuestionProvider) {}
+    constructor(private questionProvider: QuestionProvider) {
+    }
 
     public startMapProvider() {
         let options = {watch: true, enableHighAccuracy: true};
@@ -26,17 +27,18 @@ export class MapProvider {
         }).addTo(this.map);
         
         centerControl.addTo(this.map);
+        L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
         
         this.map.locate(options)
         this.map.on('locationfound', this.positionFound);
         
-        this.map.once('movestart zoomstart', this.stopCentering);
+        this.map.once('load', this.startCentering);
     }
 
     private positionFound = (e: LocationEvent) => {
         this.latLng = e.latlng;
         if(this.centering)
-            this.map.setView(this.latLng, 15); 
+            this.map.setView(this.latLng, 15);
 
         this.showPosition(e.accuracy / 2);
 
@@ -53,7 +55,7 @@ export class MapProvider {
             this.posCircle = L.circle(this.latLng, radius);
             this.posCircle.addTo(this.map);
 
-            this.map.setView(this.latLng, 15);
+            this.map.setView(this.latLng, this.map.getZoom());
         }
         
         this.posMarker.setLatLng(this.latLng);
@@ -62,8 +64,23 @@ export class MapProvider {
     }
 
     private setClosestQuestion(questions: Array<Question>) {
-        this.questionMarker = L.marker(questions[0].latLng);
+        let closest_question: Question;
+        let distance: number;
+        let smallest_distance: number = 999999999;
+        for(let question of questions) {
+            distance = (question.latLng.lat - this.latLng.lat) ** 2 + (question.latLng.lng - this.latLng.lng) ** 2
+            if (distance < smallest_distance) {
+                closest_question = question;
+            }
+        }
+        this.questionMarker = L.marker(closest_question.latLng);
         this.questionMarker.addTo(this.map);
+    }
+    
+    private startCentering = () => {
+        this.map.setView(this.latLng, this.map.getZoom());
+        this.map.once('movestart zoomstart', this.stopCentering);
+        this.centering = true;
     }
     
     private stopCentering = () => {
