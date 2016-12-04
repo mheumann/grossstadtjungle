@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as L from 'leaflet';
 import {Map, Marker, LatLng, Circle, LocationEvent} from 'leaflet';
-import {Question} from '../classes/question';
 import {QuestionProvider} from './question-provider';
 import { CenterControl } from '../classes/center-control'
 
@@ -11,7 +10,6 @@ export class MapProvider {
     private latLng: LatLng;
     private posCircle: Circle;
     private posMarker: Marker;
-    private questionMarker: Marker;
     private centering: Boolean;
 
     constructor(private questionProvider: QuestionProvider) {
@@ -41,10 +39,6 @@ export class MapProvider {
             this.map.setView(this.latLng, 15);
 
         this.showPosition(e.accuracy / 2);
-
-        this.questionProvider.getQuestions().then(questions => this.setClosestQuestion(questions));
-        //TODO: Caclulate distance
-        //TODO: Show quiz
     }
 
     private showPosition(radius: number) {
@@ -61,20 +55,6 @@ export class MapProvider {
         this.posMarker.setLatLng(this.latLng);
         this.posCircle.setLatLng(this.latLng);
         this.posCircle.setRadius(radius);
-    }
-
-    private setClosestQuestion(questions: Array<Question>) {
-        let closest_question: Question;
-        let distance: number;
-        let smallest_distance: number = 999999999;
-        for(let question of questions) {
-            distance = (question.latLng.lat - this.latLng.lat) ** 2 + (question.latLng.lng - this.latLng.lng) ** 2
-            if (distance < smallest_distance) {
-                closest_question = question;
-            }
-        }
-        this.questionMarker = L.marker(closest_question.latLng);
-        this.questionMarker.addTo(this.map);
     }
     
     private startCentering = () => {
