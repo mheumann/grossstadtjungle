@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
-import {Map, Marker, LatLng, Circle, LocationEvent} from 'leaflet';
-import {QuestionProvider} from './question-provider';
+import { Map, Marker, LatLng, Circle, LocationEvent } from 'leaflet';
+import { QuestionProvider } from './question-provider';
 import { CenterControl } from '../classes/center-control'
 
 @Injectable()

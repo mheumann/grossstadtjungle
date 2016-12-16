@@ -5,7 +5,7 @@ import {LatLng} from 'leaflet';
 
 @Injectable()
 export class QuestionProvider {
-    private closestQuestion: Question;
+    closestQuestion: Question;
     constructor() { }
     
     getQuestions(): Promise<Question[]> {
@@ -27,7 +27,7 @@ export class QuestionProvider {
         this.closestQuestion = closest_question;
     }
     
-    public getClosestQuestion(curPos: LatLng): Promise<Question> {
+    public getClosestQuestionPromise(curPos: LatLng): Promise<Question> {
         if (this.closestQuestion === undefined)
             this.calculateClosestQuestion(curPos);
         return Promise.resolve(this.closestQuestion);

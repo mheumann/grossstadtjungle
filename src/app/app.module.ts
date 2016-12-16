@@ -4,11 +4,13 @@ import { MyApp } from './app.component';
 import { MapPage } from '../pages/map-page/map-page';
 import { MapProvider} from '../providers/map-provider';
 import { QuestionProvider} from '../providers/question-provider';
+import { QuestionPage } from '../pages/question-page/question-page';
 
 @NgModule({
     declarations: [
         MyApp,
-        MapPage
+        MapPage,
+        QuestionPage
     ],
     imports: [
         IonicModule.forRoot(MyApp)
@@ -16,7 +18,8 @@ import { QuestionProvider} from '../providers/question-provider';
     bootstrap: [IonicApp],
     entryComponents: [
         MyApp,
-        MapPage
+        MapPage,
+        QuestionPage
     ],
     providers: [
         {provide: ErrorHandler, useClass: IonicErrorHandler},
