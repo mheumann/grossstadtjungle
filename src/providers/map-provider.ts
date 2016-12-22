@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Platform } from 'ionic-angular';
 import * as L from 'leaflet';
 import { Map, Marker, LatLng, Circle, LocationEvent } from 'leaflet';
 import { QuestionProvider } from './question-provider';
 import { CenterControl } from '../classes/center-control'
+
+export const DEFAULT_ZOOM = 16;
 
 @Injectable()
 export class MapProvider {
@@ -12,7 +15,7 @@ export class MapProvider {
     private posMarker: Marker;
     private centering: Boolean;
 
-    constructor(private questionProvider: QuestionProvider) {
+    constructor(private questionProvider: QuestionProvider, private platform: Platform) {
     }
 
     public startMapProvider() {
@@ -34,11 +37,16 @@ export class MapProvider {
     }
 
     private positionFound = (e: LocationEvent) => {
-        this.latLng = e.latlng;
+        if (this.platform.is('core')) {
+            this.latLng = L.latLng(49.484381,8.471704);
+            this.showPosition(10);
+        } else {
+            this.latLng = e.latlng;
+            this.showPosition(e.accuracy / 2);
+        }
+        
         if(this.centering)
-            this.map.setView(this.latLng, 15);
-
-        this.showPosition(e.accuracy / 2);
+            this.map.setView(this.latLng, DEFAULT_ZOOM);
     }
 
     private showPosition(radius: number) {
@@ -58,7 +66,7 @@ export class MapProvider {
     }
     
     private startCentering = () => {
-        this.map.setView(this.latLng, this.map.getZoom());
+        this.map.setView(this.latLng, DEFAULT_ZOOM);
         this.map.once('movestart zoomstart', this.stopCentering);
         this.centering = true;
     }

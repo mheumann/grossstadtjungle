@@ -18,8 +18,9 @@ export class QuestionProvider {
         let smallest_distance: number = 999999999;
         
         for(let question of QUESTIONS) {
-            distance = (question.latLng.lat - curPos.lat) ** 2 + (question.latLng.lng - curPos.lng) ** 2
+            distance = Math.pow((question.latLng.lat - curPos.lat), 2) + Math.pow((question.latLng.lng - curPos.lng), 2);
             if (distance < smallest_distance) {
+                smallest_distance = distance;
                 closest_question = question;
             }
         }

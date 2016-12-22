@@ -1,4 +1,4 @@
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import { Marker, LocationEvent } from 'leaflet';
@@ -13,7 +13,7 @@ import { QuestionPage } from '../question-page/question-page';
 export class MapPage {
     private questionMarker: Marker;
     
-    constructor(private navCtrl: NavController, private mapProvider: MapProvider, private questionProvider: QuestionProvider) {
+    constructor(private navCtrl: NavController, private platform: Platform, private mapProvider: MapProvider, private questionProvider: QuestionProvider) {
         this.questionMarker = L.marker([0, 0]);
     }
 
@@ -31,12 +31,16 @@ export class MapPage {
     
     private getQuestionDistance = (e: LocationEvent) => {
         let distance2user: number;
+        let latLng = e.latlng;
+        
+        if (this.platform.is('core'))
+            latLng = L.latLng(49.484381,8.471704);
+        
         if (this.questionMarker.getLatLng().lat === 0 && this.questionMarker.getLatLng().lng === 0)
-            this.questionProvider.getClosestQuestionPromise(e.latlng).then(question => this.setQuestionMarker(question));
+            this.questionProvider.getClosestQuestionPromise(latLng).then(question => this.setQuestionMarker(question));
         
-        distance2user = this.mapProvider.map.distance(e.latlng, this.questionMarker.getLatLng());
-        
-        if(distance2user < 1) {
+        distance2user = this.mapProvider.map.distance(latLng, this.questionMarker.getLatLng());
+        if(distance2user < 10) {
             //TODO: Show Quiz/Question
         }
     }
