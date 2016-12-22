@@ -1,4 +1,4 @@
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, NavParams, Platform } from 'ionic-angular';
 import { Component } from '@angular/core';
 import * as L from 'leaflet';
 import { Marker, LocationEvent } from 'leaflet';
@@ -12,45 +12,53 @@ import { QuestionPage } from '../question-page/question-page';
 })
 export class MapPage {
     private questionMarker: Marker;
-    
-    constructor(private navCtrl: NavController, private platform: Platform, private mapProvider: MapProvider, private questionProvider: QuestionProvider) {
+    private mapInitialized: boolean = false;
+
+    constructor(private navCtrl: NavController, private navParams: NavParams, private platform: Platform,
+            private mapProvider: MapProvider, private questionProvider: QuestionProvider) {
+            
         this.questionMarker = L.marker([0, 0]);
     }
 
     ionViewWillEnter() {
-        let map = L.map('map', {
-            zoom: 13,
-        });
+        if (!this.mapInitialized) {
+            let map = L.map('map', {
+                zoom: 13,
+            });
+
+            this.mapProvider.map = map;
+            this.mapProvider.startMapProvider();
+            this.mapInitialized = true;
+        }
         
-        this.mapProvider.map = map;
-        
-        this.mapProvider.startMapProvider();
-        
+        if (this.questionProvider.closestQuestion !== undefined)
+            this.questionMarker.setLatLng(this.questionProvider.closestQuestion.latLng);
+
         this.mapProvider.map.on('locationfound', this.getQuestionDistance);
     }
-    
+
     private getQuestionDistance = (e: LocationEvent) => {
         let distance2user: number;
         let latLng = e.latlng;
-        
+
         if (this.platform.is('core'))
-            latLng = L.latLng(49.484381,8.471704);
-        
+            latLng = L.latLng(49.484381, 8.471704);
+
         if (this.questionMarker.getLatLng().lat === 0 && this.questionMarker.getLatLng().lng === 0)
-            this.questionProvider.getClosestQuestionPromise(latLng).then(question => this.setQuestionMarker(question));
-        
+            this.questionProvider.getClosestQuestionPromise(latLng).then(question => this.initializeQuestionMarker(question));
+
         distance2user = this.mapProvider.map.distance(latLng, this.questionMarker.getLatLng());
-        if(distance2user < 10) {
+        if (distance2user < 10) {
             //TODO: Show Quiz/Question
         }
     }
 
-    private setQuestionMarker(question: Question): void {
-        this.questionMarker = L.marker(question.latLng);
+    private initializeQuestionMarker(question: Question): void {
+        this.questionMarker.setLatLng(question.latLng);
         this.questionMarker.addTo(this.mapProvider.map);
         this.questionMarker.on('click', this.pushQuestionPage)
     }
-    
+
     private pushQuestionPage = () => {
         this.navCtrl.push(QuestionPage);
     }

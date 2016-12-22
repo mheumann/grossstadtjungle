@@ -5,14 +5,27 @@
 </ion-header>
 
 <ion-content>
-    <div padding>
-        <h2>Frage</h2>
-        <p>{{ question.question }}</p>
-    </div>    
+    <div *ngIf="!answered">
+        <div padding>
+            <h2>Frage</h2>
+            <p>{{ question.question }}</p>
+        </div>    
 
-    <ion-list inset>
-        <ion-item>
-            <ion-input type="text" placeholder="Antwort"></ion-input>
-        </ion-item>
-    </ion-list>
+        <ion-list inset>
+            <ion-item>
+                <ion-input type="text" placeholder="Antwort" [(ngModel)]="answer" name="answer"></ion-input>
+            </ion-item>
+        </ion-list>
+
+        <div padding>
+            <button ion-button icon-right (click)="checkAnswer()">Weiter <ion-icon name="arrow-forward"></ion-icon></button>
+        </div>
+    </div>
+    
+    <div *ngIf="answered">
+        <p padding>{{ question.trivia }}</p>
+        <div padding>
+            <button ion-button icon-left (click)="backToMap()"><ion-icon name="map"></ion-icon> Zurück zur Map</button>
+        </div>
+    </div>
 </ion-content>
