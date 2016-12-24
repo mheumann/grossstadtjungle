@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform, Loading } from 'ionic-angular';
 import * as L from 'leaflet';
 import { Map, Marker, LatLng, Circle, LocationEvent } from 'leaflet';
 import { QuestionProvider } from './question-provider';
@@ -18,14 +18,16 @@ export class MapProvider {
     constructor(private questionProvider: QuestionProvider, private platform: Platform) {
     }
 
-    public startMapProvider() {
+    public startMapProvider(loader: Loading) {
         let options = {watch: true, enableHighAccuracy: true};
         let centerControl = new CenterControl({position: 'bottomright'});
 
-        L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        let tileLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
             maxZoom: 19
         }).addTo(this.map);
+        
+        tileLayer.once('load', () => { loader.dismiss() });
         
         centerControl.addTo(this.map);
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});

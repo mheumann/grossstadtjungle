@@ -6,4 +6,14 @@
     #map{
         height: 100%;
     }
+    .questionMarker {
+        transition-duration: 0.2s;
+        transition-timing-function: ease-in-out;
+        -webkit-transition-duration: 0.2s;
+        -webkit-transition-timing-function: ease-in-out;
+        
+        &.moveUp {
+            margin-top: -51px;
+        }
+    }
 }

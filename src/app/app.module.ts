@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { MyApp } from './app.component';
 import { MapPage } from '../pages/map-page/map-page';
 import { MapProvider} from '../providers/map-provider';
@@ -24,7 +25,8 @@ import { QuestionPage } from '../pages/question-page/question-page';
     providers: [
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         MapProvider,
-        QuestionProvider
+        QuestionProvider,
+        Storage
     ]
 })
 export class AppModule { }
