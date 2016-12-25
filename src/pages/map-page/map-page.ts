@@ -6,14 +6,12 @@ import { Question } from '../../classes/question';
 import { MapProvider } from '../../providers/map-provider';
 import { QuestionProvider } from '../../providers/question-provider';
 import { QuestionPage } from '../question-page/question-page';
-import * as _ from 'lodash';
 
 @Component({
     templateUrl: './map-page.html'
 })
 export class MapPage {
     private questionMarker: Marker;
-    private intervalId: number;
     private loader: Loading;
 
     constructor(private navCtrl: NavController, private platform: Platform, private mapProvider: MapProvider,
@@ -37,11 +35,15 @@ export class MapPage {
         this.mapProvider.startMapProvider(this.loader);
     }
     
-    ionViewWillEnter() {        
+    ionViewWillEnter() {                        
         if (this.questionProvider.closestQuestion !== undefined)
             this.questionMarker.setLatLng(this.questionProvider.closestQuestion.latLng);
             
         this.mapProvider.map.on('locationfound', this.getQuestionDistance);
+    }
+    
+    ionViewDidEnter() {
+        this.mapProvider.adjustMap();
     }
     
     ionViewDidLeave() {

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform, Loading } from 'ionic-angular';
 import * as L from 'leaflet';
-import { Map, Marker, LatLng, Circle, LocationEvent } from 'leaflet';
-import { QuestionProvider } from './question-provider';
+import { Map, Marker, LatLng, Circle, LocationEvent, TileLayer } from 'leaflet';
 import { CenterControl } from '../classes/center-control'
 
 export const DEFAULT_ZOOM = 16;
@@ -10,24 +9,25 @@ export const DEFAULT_ZOOM = 16;
 @Injectable()
 export class MapProvider {
     map: Map;
+    private tileLayer: TileLayer;
     private latLng: LatLng;
     private posCircle: Circle;
     private posMarker: Marker;
     private centering: Boolean;
 
-    constructor(private questionProvider: QuestionProvider, private platform: Platform) {
+    constructor(private platform: Platform) {
     }
 
     public startMapProvider(loader: Loading) {
         let options = {watch: true, enableHighAccuracy: true};
         let centerControl = new CenterControl({position: 'bottomright'});
 
-        let tileLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+        this.tileLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
             maxZoom: 19
         }).addTo(this.map);
         
-        tileLayer.once('load', () => { loader.dismiss() });
+        this.tileLayer.once('load', () => { loader.dismiss() });
         
         centerControl.addTo(this.map);
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
@@ -35,7 +35,12 @@ export class MapProvider {
         this.map.locate(options)
         this.map.on('locationfound', this.positionFound);
         
-        this.map.once('load', this.startCentering);
+        this.map.once('locationfound', this.startCentering);
+    }
+    
+    public adjustMap(): void {
+        this.map.invalidateSize(true);
+        this.startCentering();
     }
 
     private positionFound = (e: LocationEvent) => {
@@ -68,8 +73,10 @@ export class MapProvider {
     }
     
     private startCentering = () => {
-        this.map.setView(this.latLng, DEFAULT_ZOOM);
-        this.map.once('movestart zoomstart', this.stopCentering);
+        if (this.latLng !== undefined) {
+            this.map.setView(this.latLng, DEFAULT_ZOOM);
+            this.map.once('movestart zoomstart', this.stopCentering);
+        }
         this.centering = true;
     }
     
