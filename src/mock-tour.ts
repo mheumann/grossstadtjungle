@@ -6,7 +6,7 @@ export var QUESTIONS: Question[] = [
         tourId: 0,
         latLng: L.latLng(49.48406,8.475544), //Wasserturm
         question: 'Bist du behindert?',
-        answers: ['Ja', 'J'],
+        answers: ['ja', 'j'],
         hint: 'Gibt es nicht',
         trivia: 'Linus ist auch behindert'
     }, {
@@ -14,7 +14,7 @@ export var QUESTIONS: Question[] = [
         tourId: 0,
         latLng: L.latLng(49.4871628,8.466249299999959), //Paradeplatz
         question: 'Du bist nicht behindert?',
-        answers: ['Ja', 'J'],
+        answers: ['ja', 'j'],
         hint: 'Gibt es nicht',
         trivia: 'Linus ist auch behindert'
     }

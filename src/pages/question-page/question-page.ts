@@ -11,16 +11,30 @@ import * as _ from 'lodash';
 export class QuestionPage {
     question: Question;
     answer: string = '';
-    answered: boolean;
+    answered: boolean
+    attempts: number = 0;
+    errorMessage: string = '';
 
     constructor(private navCtrl: NavController, private questionProvider: QuestionProvider, private alertCtrl: AlertController) {
         this.question = this.questionProvider.closestQuestion;
     }
 
     checkAnswer(): void {
-        if (_.includes(this.question.answers, this.answer)) {
+        if (_.includes(this.question.answers, this.answer.toLowerCase())) {
             this.answered = true;
+        } else {
+            this.errorMessage = '"' + this.answer + '" ist leider falsch.'
+            this.attempts++;
         }
+    }
+
+    showHint(): void {
+        let alert = this.alertCtrl.create({
+            title: 'Tipp',
+            subTitle: this.question.hint,
+            buttons: ['Verstanden']
+        });
+        alert.present();
     }
 
     backToMap(): void {

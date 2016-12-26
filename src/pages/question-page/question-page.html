@@ -6,18 +6,21 @@
 
 <ion-content>
     <div *ngIf="!answered">
-        <div padding>
+        <div padding-horizontal>
             <h2>Frage</h2>
             <p>{{ question.question }}</p>
         </div>    
 
+        <div *ngIf="errorMessage != ''" padding-horizontal ion-text color="danger">{{ errorMessage }}</div>
+        
         <ion-list inset>
             <ion-item>
                 <ion-input type="text" placeholder="Antwort" [(ngModel)]="answer" name="answer"></ion-input>
             </ion-item>
         </ion-list>
 
-        <div padding>
+        <div padding-horizontal>
+            <button *ngIf="attempts > 2" ion-button icon-left (click)="showHint()"><ion-icon name="help-circle"></ion-icon> Tipp erhalten</button>
             <button ion-button icon-right (click)="checkAnswer()">Weiter <ion-icon name="arrow-forward"></ion-icon></button>
         </div>
     </div>
