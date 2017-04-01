@@ -20,6 +20,7 @@ export class MapProvider {
     }
 
     public startMapProvider(loader: Loading) {
+        console.log("Info: startMapProvider wird ausgeführt.");
         let centerControl = new CenterControl({position: 'bottomright'});
 
         this.tileLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -42,6 +43,7 @@ export class MapProvider {
     public adjustMap(): void {
         this.map.invalidateSize(true);
         this.startCentering();
+        this.startLocating(true);
     }
     
     private handlePermissionStatus = (status: any) => {
@@ -64,6 +66,7 @@ export class MapProvider {
     }
     
     private startLocating = (status: boolean) => {
+        console.log("Info: startLocating("+status+") wird ausgeführt.");
         let options = {watch: true, enableHighAccuracy: true};
         
         if (status) {
@@ -77,6 +80,7 @@ export class MapProvider {
     }
 
     private positionFound = (e: LocationEvent) => {
+        console.log("Info: positionFound wird ausgeführt.");
         if (this.platform.is('core')) {
             this.latLng = L.latLng(49.484381,8.471704);
             this.showPosition(10);
@@ -85,11 +89,13 @@ export class MapProvider {
             this.showPosition(e.accuracy / 2);
         }
         
+        console.log("Info: this.centering = "+this.centering);
         if(this.centering)
             this.map.setView(this.latLng, DEFAULT_ZOOM);
     }
 
     private showPosition(radius: number) {
+        console.log("Info: showPosition wird ausgeführt.");
         if (this.posMarker === undefined) {
             this.posMarker = L.marker(this.latLng);
             this.posMarker.addTo(this.map);
@@ -108,7 +114,7 @@ export class MapProvider {
     private startCentering = () => {
         if (this.latLng !== undefined) {
             this.map.setView(this.latLng, DEFAULT_ZOOM);
-            this.map.once('movestart zoomstart', this.stopCentering);
+            this.map.once('dragstart zoomstart', this.stopCentering);
         }
         this.centering = true;
     }
