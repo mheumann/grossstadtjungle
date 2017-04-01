@@ -2,7 +2,7 @@ import { Map } from 'leaflet';
 import * as L from 'leaflet';
 
 export class CenterControl implements L.Control {
-    private options: L.ControlOptions;
+    options: L.ControlOptions;
 
     constructor(options: L.ControlOptions = {position: 'topleft'}) {
         this.options = options;
