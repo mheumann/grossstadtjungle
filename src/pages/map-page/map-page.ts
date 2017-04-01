@@ -38,7 +38,8 @@ export class MapPage {
     ionViewWillEnter() {                        
         if (this.questionProvider.closestQuestion !== undefined)
             this.questionMarker.setLatLng(this.questionProvider.closestQuestion.latLng);
-            
+        
+        this.questionMarker.setIcon(questionMarkerIcon);    
         this.mapProvider.map.on('locationfound', this.getQuestionDistance);
     }
     
@@ -64,7 +65,7 @@ export class MapPage {
         if (distance2user < 10) {
             this.questionMarker.setIcon(questionMarkerAnimated);
         }
-        this.questionMarker.setIcon(questionMarkerAnimated);
+        //this.questionMarker.setIcon(questionMarkerAnimated);
     }
 
     private initializeQuestionMarker(question: Question): void {

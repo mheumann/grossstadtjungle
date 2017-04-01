@@ -11,9 +11,20 @@
         transition-timing-function: ease-in-out;
         -webkit-transition-duration: 0.2s;
         -webkit-transition-timing-function: ease-in-out;
-        
+
         &.moveUp {
             margin-top: -51px;
         }
+    }
+
+    .icon-center::before {
+        font-family: "Ionicons";
+        font-style: normal;
+        font-variant: normal;
+        font-weight: normal;
+        line-height: 1;
+        text-rendering: auto;
+        text-transform: none;
+        content: "\f31c";
     }
 }

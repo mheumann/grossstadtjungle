@@ -32,7 +32,11 @@ export class MapProvider {
         centerControl.addTo(this.map);
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
         
-        Diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
+        if (!this.platform.is('core')) {
+            Diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
+        } else {
+            this.startLocating(true);
+        }
     }
     
     public adjustMap(): void {

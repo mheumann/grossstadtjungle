@@ -12,7 +12,7 @@ export var QUESTIONS: Question[] = [
     }, {
         id: 1,
         tourId: 0,
-        latLng: L.latLng(49.4871628,8.466249299999959), //Paradeplatz
+        latLng: L.latLng(49.48716,8.466249), //Paradeplatz
         question: 'Du bist nicht behindert?',
         answers: ['ja', 'j'],
         hint: 'Gibt es nicht',
