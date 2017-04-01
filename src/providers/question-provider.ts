@@ -12,34 +12,11 @@ export class QuestionProvider {
     
     constructor(private storage: Storage) {
         this.allQuestions = QUESTIONS;
-        
-        if (this.storage.length() != 0) {
-            this.storage.get('firstId').then(firstId => { this.firstQuestionId = firstId; });
-            this.storage.get('curId').then(curId => { this.closestQuestion = this.allQuestions[curId]; });
-        }
+        this.storage.length().then(length => this.initializeVars(length));
     }
     
-    getQuestions(): Promise<Question[]> {
+    public getQuestions(): Promise<Question[]> {
         return Promise.resolve(this.allQuestions);
-    }
-    
-    private calculateClosestQuestion(curPos: LatLng): void {
-        let closest_question: Question;
-        let distance: number;
-        let smallest_distance: number = 999999999;
-        
-        for (let question of this.allQuestions) {
-            distance = Math.pow((question.latLng.lat - curPos.lat), 2) + Math.pow((question.latLng.lng - curPos.lng), 2);
-            if (distance < smallest_distance) {
-                smallest_distance = distance;
-                closest_question = question;
-            }
-        }
-        
-        this.closestQuestion = closest_question;
-        this.firstQuestionId = this.closestQuestion.id;
-        this.storage.set('curId', this.closestQuestion.id);
-        this.storage.set('firstId', this.closestQuestion.id);
     }
     
     public getClosestQuestionPromise(curPos: LatLng): Promise<Question> {
@@ -63,5 +40,31 @@ export class QuestionProvider {
             tourStatus = 0;
         }
         return tourStatus;
+    }
+    
+    private initializeVars(length: number) {
+        if (length != 0) {
+            this.storage.get('firstId').then(firstId => { this.firstQuestionId = firstId; });
+            this.storage.get('curId').then(curId => { this.closestQuestion = this.allQuestions[curId]; });
+        }
+    }
+    
+    private calculateClosestQuestion(curPos: LatLng): void {
+        let closest_question: Question;
+        let distance: number;
+        let smallest_distance: number = 999999999;
+        
+        for (let question of this.allQuestions) {
+            distance = Math.pow((question.latLng.lat - curPos.lat), 2) + Math.pow((question.latLng.lng - curPos.lng), 2);
+            if (distance < smallest_distance) {
+                smallest_distance = distance;
+                closest_question = question;
+            }
+        }
+        
+        this.closestQuestion = closest_question;
+        this.firstQuestionId = this.closestQuestion.id;
+        this.storage.set('curId', this.closestQuestion.id);
+        this.storage.set('firstId', this.closestQuestion.id);
     }
 }
