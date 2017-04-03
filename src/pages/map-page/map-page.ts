@@ -39,7 +39,6 @@ export class MapPage {
         if (this.questionProvider.closestQuestion !== undefined)
             this.questionMarker.setLatLng(this.questionProvider.closestQuestion.latLng);
         
-        this.questionMarker.setIcon(questionMarkerIcon);    
         this.mapProvider.map.on('locationfound', this.getQuestionDistance);
     }
     
@@ -64,14 +63,16 @@ export class MapPage {
         distance2user = this.mapProvider.map.distance(latLng, this.questionMarker.getLatLng());
         if (distance2user < 10) {
             this.questionMarker.setIcon(questionMarkerAnimated);
+            this.questionMarker.on('click', this.pushQuestionPage);
+        } else {
+            this.questionMarker.setIcon(questionMarkerIcon);
+            this.questionMarker.off('click');
         }
-        //this.questionMarker.setIcon(questionMarkerAnimated);
     }
 
     private initializeQuestionMarker(question: Question): void {
         this.questionMarker.setLatLng(question.latLng);
         this.questionMarker.addTo(this.mapProvider.map);
-        this.questionMarker.on('click', this.pushQuestionPage);
     }
 
     private pushQuestionPage = () => {
