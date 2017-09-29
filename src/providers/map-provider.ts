@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Diagnostic } from 'ionic-native';
+import { Diagnostic } from '@ionic-native/diagnostic';
 import { Platform, Loading } from 'ionic-angular';
 import * as L from 'leaflet';
 import { Map, Marker, LatLng, Circle, LocationEvent, TileLayer } from 'leaflet';
@@ -16,7 +16,7 @@ export class MapProvider {
     private posMarker: Marker;
     private centering: Boolean;
 
-    constructor(private platform: Platform) {
+    constructor(private platform: Platform, private diagnostic: Diagnostic) {
     }
 
     public startMapProvider(loader: Loading) {
@@ -34,7 +34,8 @@ export class MapProvider {
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
         
         if (!this.platform.is('core')) {
-            Diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
+            console.log("Ich bin nicht 'core'");
+            this.diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
         } else {
             this.startLocating(true);
         }
@@ -48,18 +49,18 @@ export class MapProvider {
     
     private handlePermissionStatus = (status: any) => {
         switch(status) {
-            case Diagnostic.permissionStatus.NOT_REQUESTED:
-                Diagnostic.requestLocationAuthorization().then(this.handleGeolocationStatus);
+            case this.diagnostic.permissionStatus.NOT_REQUESTED:
+                this.diagnostic.requestLocationAuthorization().then(this.handleGeolocationStatus);
                 break;
-            case Diagnostic.permissionStatus.GRANTED:
-            case Diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
-            default: this.handleGeolocationStatus(Diagnostic.permissionStatus.GRANTED);
+            case this.diagnostic.permissionStatus.GRANTED:
+            case this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
+            default: this.handleGeolocationStatus(this.diagnostic.permissionStatus.GRANTED);
         }
     }
     
     private handleGeolocationStatus = (status: any) => {
-        if (status == Diagnostic.permissionStatus.GRANTED || status == Diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
-            Diagnostic.isLocationEnabled().then(this.startLocating)
+        if (status == this.diagnostic.permissionStatus.GRANTED || status == this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE) {
+            this.diagnostic.isLocationEnabled().then(this.startLocating)
         } else {
             alert("Du musst der App Zugriff auf deinen Standort geben!");
         }

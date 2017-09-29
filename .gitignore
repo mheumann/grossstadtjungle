@@ -46,6 +46,7 @@ jspm_packages
 
 ### Ionic/Cordova ###node_modules/
 .tmp/
+.sourcemaps/
 www/assets
 www/build
 www/index.html

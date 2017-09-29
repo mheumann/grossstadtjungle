@@ -18,11 +18,7 @@
     }
 
     .icon-center::before {
-        font-family: "Ionicons";
-        font-style: normal;
-        font-variant: normal;
-        font-weight: normal;
-        line-height: 1;
+        font: normal normal normal 2em "Ionicons";
         text-rendering: auto;
         text-transform: none;
         content: "\f31c";
