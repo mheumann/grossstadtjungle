@@ -7,7 +7,8 @@
 <ion-content>
     <div *ngIf="!answered">
         <div padding-horizontal>
-            <h2>Frage</h2>
+            <h2>Frage - {{ question.place }}</h2>
+            <p>{{ question.intro }}</p>
             <p>{{ question.question }}</p>
         </div>    
 
@@ -26,9 +27,12 @@
     </div>
     
     <div *ngIf="answered">
-        <p padding>{{ question.trivia }}</p>
-        <div padding>
-            <button ion-button icon-left (click)="backToMap()"><ion-icon name="map"></ion-icon> Zurück zur Map</button>
+        <div padding-horizontal>
+            <h2>Trivia</h2>
+            <p>{{ question.trivia }}</p>
+            <div>
+                <button ion-button icon-left (click)="backToMap()"><ion-icon name="map"></ion-icon> Zurück zur Map</button>
+            </div>
         </div>
     </div>
 </ion-content>

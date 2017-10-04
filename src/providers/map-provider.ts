@@ -34,7 +34,6 @@ export class MapProvider {
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
         
         if (!this.platform.is('core')) {
-            console.log("Ich bin nicht 'core'");
             this.diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
         } else {
             this.startLocating(true);
@@ -83,7 +82,7 @@ export class MapProvider {
     private positionFound = (e: LocationEvent) => {
         console.log("Info: positionFound wird ausgeführt.");
         if (this.platform.is('core')) {
-            this.latLng = L.latLng(49.484381,8.471704);
+            this.latLng = L.latLng(49.48406,8.475554);
             this.showPosition(10);
         } else {
             this.latLng = e.latlng;
