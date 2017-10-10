@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Diagnostic } from '@ionic-native/diagnostic';
-import { Platform, Loading } from 'ionic-angular';
+import {Platform, Loading, AlertController } from 'ionic-angular';
 import * as L from 'leaflet';
 import { Map, Marker, LatLng, Circle, LocationEvent, TileLayer } from 'leaflet';
 import { CenterControl } from '../classes/center-control'
@@ -16,7 +16,7 @@ export class MapProvider {
     private posMarker: Marker;
     private centering: Boolean;
 
-    constructor(private platform: Platform, private diagnostic: Diagnostic) {
+    constructor(private platform: Platform, private diagnostic: Diagnostic, public alertCtrl: AlertController) {
     }
 
     public startMapProvider(loader: Loading) {
@@ -32,18 +32,17 @@ export class MapProvider {
         
         centerControl.addTo(this.map);
         L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
+    }
+    
+    public adjustMap(): void {
+        this.map.invalidateSize(true);
+        this.startCentering();
         
         if (!this.platform.is('core')) {
             this.diagnostic.getLocationAuthorizationStatus().then(this.handlePermissionStatus);
         } else {
             this.startLocating(true);
         }
-    }
-    
-    public adjustMap(): void {
-        this.map.invalidateSize(true);
-        this.startCentering();
-        this.startLocating(true);
     }
     
     private handlePermissionStatus = (status: any) => {
@@ -69,14 +68,13 @@ export class MapProvider {
         console.log("Info: startLocating("+status+") wird ausgeführt.");
         let options = {watch: true, enableHighAccuracy: true};
         
-        if (status) {
-            this.map.locate(options)
-            this.map.on('locationfound', this.positionFound);
-
-            this.map.once('locationfound', this.startCentering);
-        } else {
-            alert("Bitte aktivier GPS und starte die App erneut");
+        if (!status) {
+            this.showGpsAlert();
         }
+        this.map.locate(options)
+        this.map.on('locationfound', this.positionFound);
+
+        this.map.once('locationfound', this.startCentering);
     }
 
     private positionFound = (e: LocationEvent) => {
@@ -121,5 +119,23 @@ export class MapProvider {
     
     private stopCentering = () => {
         this.centering = false;
+    }
+    
+    public showGpsAlert() {
+        let gpsAlert = this.alertCtrl.create({
+            title: 'Dein GPS ist nicht aktiviert!',
+            subTitle: 'Bitte aktiviere im nächsten Schritt dein GPS und kehre dann zurück in die App.',
+            buttons: [{
+                text: 'Abbrechen',
+            },
+            {
+                text: 'Ok',
+                handler: data => {
+                    console.log(data);
+                    this.diagnostic.switchToLocationSettings();
+                }
+            }],
+        });
+        gpsAlert.present();
     }
 }

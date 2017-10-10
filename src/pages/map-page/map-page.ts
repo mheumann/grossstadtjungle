@@ -29,6 +29,7 @@ export class MapPage {
         
         let map = L.map('map', {
             zoom: 13,
+            center: [49.48716,8.46625],
         });
 
         this.mapProvider.map = map;
@@ -78,21 +79,6 @@ export class MapPage {
     private pushQuestionPage = () => {
         this.navCtrl.push(QuestionPage);
     }
-
-//TODO: Decide weather to use the gif or css-animated marker
-//    private updateMarkerTransition(): HTMLElement {
-//        let el = <HTMLElement>document.getElementsByClassName('questionMarker')[0];
-//
-//        if (_.includes(el.classList, 'moveUp')) {
-//            el.classList.remove('moveUp');
-//            el.style.marginTop = '-46px';
-//        } else {
-//            el.classList.add('moveUp');
-//            el.style.marginTop = '-41px';
-//        }
-//
-//        return el;
-//    }
 }
 
 export var questionMarkerIcon = L.icon({
