@@ -1,38 +1,17 @@
-import { NgModule, ErrorHandler } from '@angular/core';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { IonicStorageModule } from '@ionic/storage';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { StatusBar } from '@ionic-native/status-bar'
-import { MyApp } from './app.component';
-import { MapPage } from '../pages/map-page/map-page';
-import { MapProvider} from '../providers/map-provider';
-import { QuestionProvider} from '../providers/question-provider';
-import { QuestionPage } from '../pages/question-page/question-page';
+import { RouteReuseStrategy } from '@angular/router';
+
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 
 @NgModule({
-    declarations: [
-        MyApp,
-        MapPage,
-        QuestionPage
-    ],
-    imports: [
-        BrowserModule,
-        IonicModule.forRoot(MyApp),
-        IonicStorageModule.forRoot()
-    ],
-    bootstrap: [IonicApp],
-    entryComponents: [
-        MyApp,
-        MapPage,
-        QuestionPage
-    ],
-    providers: [
-        {provide: ErrorHandler, useClass: IonicErrorHandler},
-        Diagnostic,
-        StatusBar,
-        MapProvider,
-        QuestionProvider
-    ]
+  declarations: [AppComponent],
+  entryComponents: [],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
