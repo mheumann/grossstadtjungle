@@ -60,12 +60,30 @@ export class MapPage implements OnInit, ViewDidEnter {
   private handlePermissionStatus = (status: PermissionStatus) => {
     switch (status.location) {
       case 'prompt' || 'prompt-with-rationale':
-        this.diagnostic.requestLocationAuthorization().then(this.handleGeolocationStatus);
+        Geolocation.requestPermissions({permissions: ['location']}).then(this.handleGeolocationStatus);
         break;
       case 'granted':
       default:
-        this.handleGeolocationStatus(this.diagnostic.permissionStatus.GRANTED);
+        this.handleGeolocationStatus(status);
     }
+  };
+
+  private handleGeolocationStatus = (status: PermissionStatus) => {
+    if (status.location === 'granted') {
+      this.startLocating(true);
+    } else {
+      alert('Du musst der App Zugriff auf deinen Standort geben!');
+    }
+  };
+
+  private startLocating(status: boolean) {
+    console.log('Info: startLocating(' + status + ') wird ausgeführt.');
+    const options: L.LocateOptions = {watch: true, enableHighAccuracy: true};
+
+    this.map.locate(options);
+    this.map.on('locationfound', this.positionFound);
+
+    this.map.once('locationfound', this.startCentering);
   }
 
   private showPosition(radius: number) {
