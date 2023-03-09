@@ -4,9 +4,10 @@ import {LoadingController, NavController, ViewDidEnter} from '@ionic/angular';
 import {Capacitor} from '@capacitor/core';
 import {Geolocation, PermissionStatus} from '@capacitor/geolocation';
 import {Map, LocationEvent, Marker, TileLayer, LatLng, Circle, LatLngTuple} from 'leaflet';
-import {QuestionProviderService} from '../../services/question-provider.service';
+import {QuestionService} from '../../services/question.service';
 import {Question} from '../../models/question';
 import {CenterControl} from '../../components/center-control';
+import {take} from 'rxjs/operators';
 
 @Component({
   selector: 'app-map',
@@ -23,7 +24,7 @@ export class MapPage implements OnInit, ViewDidEnter {
   private questionMarker: Marker;
   private centering: boolean;
 
-  constructor(private navCtrl: NavController, private loadingCtrl: LoadingController, private questionProvider: QuestionProviderService) {
+  constructor(private navCtrl: NavController, private loadingCtrl: LoadingController, private questionProvider: QuestionService) {
   }
 
   ngOnInit(): void {
@@ -40,9 +41,9 @@ export class MapPage implements OnInit, ViewDidEnter {
 
     this.questionMarker = L.marker([0, 0], {icon: questionMarkerIcon});
 
-    if (this.questionProvider.closestQuestion !== undefined) {
-      this.questionMarker.setLatLng(this.questionProvider.closestQuestion.latLng);
-    }
+    this.questionProvider.loadTour();
+
+    // this.questionProvider.currentQuestion$.subscribe(question => this.questionMarker.setLatLng(question.latLng));
   }
 
   ionViewDidEnter(): void {
@@ -98,6 +99,7 @@ export class MapPage implements OnInit, ViewDidEnter {
       this.latLng = e.latlng;
       this.showPosition(e.accuracy / 2);
     }
+    this.questionProvider.calculateClosestQuestion(this.latLng);
 
     if (this.centering) {
       this.map.setView(this.latLng, DEFAULT_ZOOM);
@@ -141,7 +143,7 @@ export class MapPage implements OnInit, ViewDidEnter {
     const questionLatLng = this.questionMarker.getLatLng();
 
     if (questionLatLng.lat === 0 && questionLatLng.lng === 0) {
-      this.questionProvider.getClosestQuestionPromise(userLatLng).then(question => this.initializeQuestionMarker(question));
+      this.questionProvider.currentQuestion$.pipe(take(1)).subscribe(question => this.initializeQuestionMarker(question));
     }
 
     const distance2user = this.map.distance(userLatLng, questionLatLng);
