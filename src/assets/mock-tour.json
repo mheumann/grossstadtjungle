@@ -26,7 +26,7 @@
         "place": "Schillerplatz",
         "intro": "Zwischen dem Mannheimer Schloss und dem Museum Zeughaus (in D5) befindet sich eine Grünanlage, benannt nach dem deutschen Dichter, Philosoph und Historiker: Friedrich Schiller.",
         "question": "Welches 1778 eröffnete Haus, das hier an diesem Ort stand, war ein Geschenk des Kurfürsten Karl Theodors, nachdem er Bayern erbte?",
-        "answers": ["das nationaltheater", "nationaltheater", "theater"],
+        "answers": ["das nationaltheater", "nationaltheater", "theater", "altes nationaltheater"],
         "hint": "Das gesuchte Bauwerk war unter anderem dazu da, Stücke von Dichtern, wie z.B. Friedrich Schiller aufführen zu können.",
         "trivia": "Im Jahr 1782 wurde an diesem Ort Friedrich Schillers \"Die Räuber\" uraufgeführt."
     }, {
