@@ -5,4 +5,5 @@ export interface TourState {
   allQuestions: Question[];
   currentQuestion?: Question;
   firstQuestionId?: Question['id'];
+  answeredQuestionCount: number;
 }

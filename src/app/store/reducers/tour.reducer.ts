@@ -6,7 +6,8 @@ export const initialState: TourState = {
   loadState: 'NOT_LOADED',
   allQuestions: [],
   currentQuestion: null,
-  firstQuestionId: null
+  firstQuestionId: null,
+  answeredQuestionCount: 0
 };
 
 export const tourReducer = createReducer<TourState>(
@@ -18,10 +19,11 @@ export const tourReducer = createReducer<TourState>(
       loadState: 'LOADED'
     })),
     on(tourActions.findNextQuestion, (state): TourState => {
-      const currQuestionId = state.currentQuestion.id;
-      const nextQuestion = ((currQuestionId + 1) === state.allQuestions.length) ?
-        state.allQuestions[0] : state.allQuestions[currQuestionId + 1];
-      return {...state, currentQuestion: nextQuestion};
+      const answeredQuestionCount = state.answeredQuestionCount + 1;
+      const nextQuestion = state.allQuestions[
+        (state.currentQuestion.id + 1) % state.allQuestions.length
+        ];
+      return {...state, currentQuestion: nextQuestion, answeredQuestionCount};
     }),
     on(tourActions.storeFirstQuestion, (state, {question}): TourState => ({
       ...state,

@@ -1,29 +1,31 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {AlertController, NavController} from '@ionic/angular';
 import {Question} from '../../models/question';
-import {QuestionProviderService} from '../../services/question-provider.service';
+import {QuestionService} from '../../services/question.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   templateUrl: './question.page.html',
   styleUrls: ['question.page.scss']
 })
-export class QuestionPage {
+export class QuestionPage implements OnDestroy {
   question: Question;
   answer = '';
   answered = false;
   attempts = 0;
   errorMessage = '';
+  private questionSubscription: Subscription;
 
   constructor(
     private navCtrl: NavController,
-    private questionProviderService: QuestionProviderService,
+    private questionService: QuestionService,
     private alertCtrl: AlertController
   ) {
-    this.question = this.questionProviderService.closestQuestion;
+    this.questionSubscription = this.questionService.currentQuestion$.subscribe(question => this.question = question);
   }
 
   checkAnswer(): void {
-    if (this.question.answers.includes(this.answer.toLowerCase())) {
+    if (this.questionService.isCorrectAnswer(this.answer, this.question.answers)) {
       this.answered = true;
     } else {
       this.errorMessage = '"' + this.answer + '" ist leider falsch.';
@@ -37,13 +39,12 @@ export class QuestionPage {
       subHeader: this.question.hint,
       buttons: ['Verstanden']
     });
-    alert.present();
+    await alert.present();
   }
 
   async backToMap(): Promise<void> {
-    const tourStatus = this.questionProviderService.setNextQuestion();
-
-    if (tourStatus === 0) {
+    // TODO: if tour completed
+    if (this.answer === 'test1000') {
       const alert = await this.alertCtrl.create({
         header: 'Glückwunsch',
         subHeader: 'Du hast alle Fragen richtig beantwortet und hoffentlich einen guten Überblick über die Stadt bekommen.',
@@ -51,7 +52,12 @@ export class QuestionPage {
       });
       alert.present().then(() => this.navCtrl.navigateBack('map'));
     } else {
+      this.questionService.setNextQuestion();
       await this.navCtrl.navigateBack('map');
     }
+  }
+
+  ngOnDestroy(): void {
+    this.questionSubscription.unsubscribe();
   }
 }
