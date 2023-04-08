@@ -3,7 +3,7 @@ import {Question} from '../models/question';
 import {LatLng} from 'leaflet';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {filter, map, take, tap} from 'rxjs/operators';
+import {distinctUntilChanged, filter, map, take, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectAllQuestions, selectCurrentQuestion} from '../store/selectors';
 import {tourActions} from '../store/actions/tour.actions';
@@ -17,7 +17,7 @@ export class QuestionService {
 
   constructor(private http: HttpClient, private store: Store) {
     this.allQuestions$ = this.store.select(selectAllQuestions).pipe(filter(questions => !!questions.length));
-    this.currentQuestion$ = this.store.select(selectCurrentQuestion).pipe(filter(question => !!question));
+    this.currentQuestion$ = this.store.select(selectCurrentQuestion).pipe(distinctUntilChanged());
     this.tourState$ = this.store.select(selectQuestionCounters)
       .pipe(
         // TODO change location for map to selector
