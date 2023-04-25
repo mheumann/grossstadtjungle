@@ -20,6 +20,7 @@ export class QuestionService {
     this.currentQuestion$ = this.store.select(selectCurrentQuestion).pipe(distinctUntilChanged());
     this.tourState$ = this.store.select(selectQuestionCounters)
       .pipe(
+        distinctUntilChanged(),
         // TODO change location for map to selector
         map(({total, current}) =>
           (current > 0) ? ((current < total) ? 'RUNNING' : 'COMPLETED') : 'STARTING')

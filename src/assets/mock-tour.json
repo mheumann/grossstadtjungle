@@ -8,7 +8,8 @@
         "question": "Welchen Titel trägt sie?",
         "answers": ["das rad", "rad"],
         "hint": "Der Bildhauer war Morice Lipsi (Tafel vor Ort)",
-        "trivia": "Zwischen 1886 und 1889 wurde der 60 Meter hohe Turm (der Durchmesser liegt bei 19 Metern) nach Plänen von Gustav Halmhuber gebaut. Tatsächlich hatte er ursprünglich alle Funktionen der Trinkwasserversorgung zu erfüllen."
+        "trivia": "Zwischen 1886 und 1889 wurde der 60 Meter hohe Turm (der Durchmesser liegt bei 19 Metern) nach Plänen von Gustav Halmhuber gebaut. Tatsächlich hatte er ursprünglich alle Funktionen der Trinkwasserversorgung zu erfüllen.",
+        "nextId": 1
     }, {
         "id": 1,
         "tourId": 0,
@@ -18,7 +19,8 @@
         "question": "Welche Jahreszahl haben die Kunsthalle Mannheim und die Skulptur Karl Friedrichs gemeinsam?",
         "answers": ["1907"],
         "hint": "Vergleicht man die Inschriften auf der Rückseite beider Skulpturen, findet man bei Karl Friedrich eine Jahreszahl mehr.",
-        "trivia": "Unter anderem beherbergt das Schloss Mannheim aktuell die Universitätsbibliothek, Seminarräume und Vorlesungssäle der Mannheimer Universität."
+        "trivia": "Unter anderem beherbergt das Schloss Mannheim aktuell die Universitätsbibliothek, Seminarräume und Vorlesungssäle der Mannheimer Universität.",
+        "nextId": 2
     }, {
         "id": 2,
         "tourId": 0,
@@ -28,7 +30,8 @@
         "question": "Welches 1778 eröffnete Haus, das hier an diesem Ort stand, war ein Geschenk des Kurfürsten Karl Theodors, nachdem er Bayern erbte?",
         "answers": ["das nationaltheater", "nationaltheater", "theater", "altes nationaltheater"],
         "hint": "Das gesuchte Bauwerk war unter anderem dazu da, Stücke von Dichtern, wie z.B. Friedrich Schiller aufführen zu können.",
-        "trivia": "Im Jahr 1782 wurde an diesem Ort Friedrich Schillers \"Die Räuber\" uraufgeführt."
+        "trivia": "Im Jahr 1782 wurde an diesem Ort Friedrich Schillers \"Die Räuber\" uraufgeführt.",
+        "nextId": 3
     }, {
         "id": 3,
         "tourId": 0,
@@ -38,7 +41,8 @@
         "question": "Welcher Bundeskanzler weihte den Friedensengel ein?",
         "answers": ["konrad adenauer", "adenauer"],
         "hint": "Meist werden bedeutende Ereignisse fotographisch festgehalten",
-        "trivia": "Konrad Adenauer selbst weihte das Mahnmal 1952 ursprünglich im Quadrat B4 ein. Erst 1983 versetzte man es zum heutigen Standort neben dem Rathaus."
+        "trivia": "Konrad Adenauer selbst weihte das Mahnmal 1952 ursprünglich im Quadrat B4 ein. Erst 1983 versetzte man es zum heutigen Standort neben dem Rathaus.",
+        "nextId": 4
     }, {
         "id": 4,
         "tourId": 0,
@@ -48,7 +52,8 @@
         "question": "Welcher Art von Angriff zerstörte im Zweiten Weltkrieg neben Sprengladungen die Synagoge",
         "answers": ["ein luftangriff", "luftangriff", "bomben"],
         "hint": "Es war kein Bodenangriff, sondern ...",
-        "trivia": "Nach der Machtergreifung der Nationalsozialisten wurde, während der Novemberprogrome 1938, von SA-Männern erstmals die Einrichtung zerstört, Feuer gelegt und Sprengstoff gezündet. Im darauffolgenden Jahr wurde die jüdische Gemeinde dann dazu gezwungen sie an die Stadverwaltung zu \"verkaufen\"."
+        "trivia": "Nach der Machtergreifung der Nationalsozialisten wurde, während der Novemberprogrome 1938, von SA-Männern erstmals die Einrichtung zerstört, Feuer gelegt und Sprengstoff gezündet. Im darauffolgenden Jahr wurde die jüdische Gemeinde dann dazu gezwungen sie an die Stadverwaltung zu \"verkaufen\".",
+        "nextId": 5
     }, {
         "id": 5,
         "tourId": 0,
@@ -58,7 +63,8 @@
         "question": "Was hält Merkur in der anderen Hand?",
         "answers": ["eine sonne", "die sonne", "sonne"],
         "hint": "Der Stern, der in unserem Sonnensystem im Zentrum steht.",
-        "trivia": "Der Namensgebung entsprechend ist der Marktplatz nach wie vor Veranstaltungsort für Mannheimer Wochenmärkte: Dienstag und Donnerstag 08:00 bis 14:00 Uhr bzw. Samstag 08:00 bis 15:00 Uhr. Ebenso kann man täglich Zeuge eines Glockenspiels des Glockenturms vor Ort werden: um 07:45 Uhr, 11:45 Uhr und 17:45 Uhr."
+        "trivia": "Der Namensgebung entsprechend ist der Marktplatz nach wie vor Veranstaltungsort für Mannheimer Wochenmärkte: Dienstag und Donnerstag 08:00 bis 14:00 Uhr bzw. Samstag 08:00 bis 15:00 Uhr. Ebenso kann man täglich Zeuge eines Glockenspiels des Glockenturms vor Ort werden: um 07:45 Uhr, 11:45 Uhr und 17:45 Uhr.",
+        "nextId": 6
     }, {
         "id": 6,
         "tourId": 0,
@@ -68,6 +74,7 @@
         "question": "Wie viele Seiten des Mahnmals wurden mit Inschriften versehen?",
         "answers": ["4", "vier"],
         "hint": "Das Mahnmal ist ein Kubus",
-        "trivia": "Der Kubus, der vom Bildhauer Jochen Kitzbihler angefertigt wurde, ist schräg zum Paradeplatz ausgerichtet und weist eine Kantenlänge von insgesamt 3 Metern auf. Eingeweiht wurde er am 25. November 2003."
+        "trivia": "Der Kubus, der vom Bildhauer Jochen Kitzbihler angefertigt wurde, ist schräg zum Paradeplatz ausgerichtet und weist eine Kantenlänge von insgesamt 3 Metern auf. Eingeweiht wurde er am 25. November 2003.",
+        "nextId": 0
     }
 ]}

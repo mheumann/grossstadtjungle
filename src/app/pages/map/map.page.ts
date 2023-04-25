@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {Circle, LatLng, LatLngTuple, Map, Marker, TileLayer} from 'leaflet';
-import {LoadingController, NavController, ViewDidEnter, ViewDidLeave} from '@ionic/angular';
+import {AlertController, LoadingController, NavController, ViewDidEnter, ViewDidLeave} from '@ionic/angular';
 import {Capacitor} from '@capacitor/core';
 import {Geolocation, PermissionStatus} from '@capacitor/geolocation';
 import {QuestionService} from '../../services/question.service';
 import {CenterControl} from '../../components/center-control';
 import {filter, tap} from 'rxjs/operators';
-import {Subscription} from "rxjs";
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-map',
@@ -15,7 +15,7 @@ import {Subscription} from "rxjs";
   styleUrls: ['./map.page.scss'],
 })
 export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
-  private static userPos: LatLngTuple = [49.486409, 8.462112];
+  public static userPos: LatLngTuple = [49.486409, 8.462112];
   private map: Map;
   private tileLayer: TileLayer;
   private latLng: LatLng;
@@ -26,7 +26,10 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
 
   private currentQuestionSub: Subscription;
 
-  constructor(private navCtrl: NavController, private loadingCtrl: LoadingController, private questionProvider: QuestionService) {
+  constructor(private navCtrl: NavController,
+              private loadingCtrl: LoadingController,
+              private questionProvider: QuestionService,
+              private alertCtrl: AlertController) {
   }
 
   ngOnInit(): void {
@@ -55,7 +58,9 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     if (Capacitor.isNativePlatform()) {
       Geolocation.checkPermissions().then(this.handlePermissionStatus);
     } else {
-      this.startLocating();
+      this.questionProvider.tourState$.pipe(
+        tap(state => state === 'COMPLETED' ? this.showCompletedMsg() : this.startLocating())
+      ).subscribe();
     }
   }
 
@@ -89,6 +94,15 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
 
     this.handlePositionChange2Marker(userLatLng);
   };
+
+  private async showCompletedMsg(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Glückwunsch',
+      subHeader: 'Du hast alle Fragen richtig beantwortet und hoffentlich einen guten Überblick über die Stadt bekommen.',
+      buttons: ['Ok']
+    });
+    await alert.present();
+  }
 
   private showPosition(radius: number) {
     if (this.posMarker === undefined) {
@@ -153,7 +167,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
       this.questionMarker.setOpacity(1);
       this.handlePositionChange2Marker(userLatLng);
     });
-  }
+  };
 
   private handlePositionChange2Marker(userLatLng: LatLng): void {
     const questionLatLng = this.questionMarker.getLatLng();

@@ -10,4 +10,5 @@ export interface Question {
     answers: Array<string>;
     hint: string;
     trivia: string;
+    nextId: number;
 }

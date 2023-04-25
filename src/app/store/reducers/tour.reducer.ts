@@ -20,9 +20,8 @@ export const tourReducer = createReducer<TourState>(
     })),
     on(tourActions.findNextQuestion, (state): TourState => {
       const answeredQuestionCount = state.answeredQuestionCount + 1;
-      const nextQuestion = state.allQuestions[
-        (state.currentQuestion.id + 1) % state.allQuestions.length
-        ];
+      const nextQuestion = state.allQuestions.find(question => question.id === Number(state.currentQuestion.nextId));
+      console.log('next question', state.allQuestions);
       return {...state, currentQuestion: nextQuestion, answeredQuestionCount};
     }),
     on(tourActions.storeFirstQuestion, (state, {question}): TourState => ({
