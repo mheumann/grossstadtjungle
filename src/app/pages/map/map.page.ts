@@ -6,8 +6,9 @@ import {Capacitor} from '@capacitor/core';
 import {Geolocation, PermissionStatus} from '@capacitor/geolocation';
 import {QuestionService} from '../../services/question.service';
 import {CenterControl} from '../../components/center-control';
-import {filter, tap} from 'rxjs/operators';
-import {Subscription} from 'rxjs';
+import {filter, takeUntil, tap} from 'rxjs/operators';
+import {Subject} from 'rxjs';
+import {TourStateEnum} from '../../enums/tour-state-enum';
 
 @Component({
   selector: 'app-map',
@@ -23,8 +24,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   private posMarker: Marker;
   private questionMarker: Marker;
   private centering: boolean;
-
-  private currentQuestionSub: Subscription;
+  private destroy$ = new Subject();
 
   constructor(private navCtrl: NavController,
               private loadingCtrl: LoadingController,
@@ -47,7 +47,6 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.questionMarker = L.marker([0, 0],
       {icon: questionMarkerIcon, opacity: 0, zIndexOffset: 999})
       .addTo((this.map));
-    // this.questionMarker
 
     this.questionProvider.loadTour();
   }
@@ -59,13 +58,14 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
       Geolocation.checkPermissions().then(this.handlePermissionStatus);
     } else {
       this.questionProvider.tourState$.pipe(
-        tap(state => state === 'COMPLETED' ? this.showCompletedMsg() : this.startLocating())
+        takeUntil(this.destroy$),
+        tap(state => state === TourStateEnum.completed ? this.handleTourComplete() : this.startLocating())
       ).subscribe();
     }
   }
 
   ionViewDidLeave(): void {
-    this.currentQuestionSub.unsubscribe();
+    this.destroy$.next(true);
   }
 
   private startLocating() {
@@ -73,7 +73,6 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
 
     this.map.locate(options);
     this.map.on('locationfound', this.positionFound);
-
     this.map.once('locationfound', this.initializePlayground);
   }
 
@@ -95,13 +94,15 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.handlePositionChange2Marker(userLatLng);
   };
 
-  private async showCompletedMsg(): Promise<void> {
+  private async handleTourComplete(): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Glückwunsch',
       subHeader: 'Du hast alle Fragen richtig beantwortet und hoffentlich einen guten Überblick über die Stadt bekommen.',
       buttons: ['Ok']
     });
     await alert.present();
+
+    this.questionMarker.removeFrom(this.map);
   }
 
   private showPosition(radius: number) {
@@ -155,7 +156,8 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     const userLatLng = (Capacitor.isNativePlatform()) ? e.latlng : L.latLng(MapPage.userPos);
     this.startCentering();
 
-    this.currentQuestionSub = this.questionProvider.currentQuestion$.pipe(
+    this.questionProvider.currentQuestion$.pipe(
+      takeUntil(this.destroy$),
       tap(question => {
         if (!question) {
           this.questionProvider.calculateClosestQuestion(userLatLng);

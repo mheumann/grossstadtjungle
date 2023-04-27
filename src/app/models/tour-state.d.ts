@@ -1,7 +1,8 @@
 import {Question} from './question';
+import {TourLoadStatusEnum} from '../enums/tour-load-status-enum';
 
 export interface TourState {
-  loadState: 'NOT_LOADED' | 'LOADING' | 'LOADED';
+  loadState: TourLoadStatusEnum;
   allQuestions: Question[];
   currentQuestion?: Question;
   firstQuestionId?: Question['id'];

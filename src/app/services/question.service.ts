@@ -3,28 +3,26 @@ import {Question} from '../models/question';
 import {LatLng} from 'leaflet';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {distinctUntilChanged, filter, map, take, tap} from 'rxjs/operators';
+import {distinctUntilChanged, filter, take, tap} from 'rxjs/operators';
 import {Store} from '@ngrx/store';
 import {selectAllQuestions, selectCurrentQuestion} from '../store/selectors';
 import {tourActions} from '../store/actions/tour.actions';
-import {selectQuestionCounters} from '../store/selectors/tour.selectors';
+import {selectTourLoadStatus, selectTourState} from '../store/selectors/tour.selectors';
+import {TourLoadStatusEnum} from '../enums/tour-load-status-enum';
+import {TourStateEnum} from '../enums/tour-state-enum';
 
 @Injectable({providedIn: 'root'})
 export class QuestionService {
+  tourLoadStatus$: Observable<TourLoadStatusEnum>;
   allQuestions$: Observable<Question[]>;
   currentQuestion$: Observable<Question>;
-  tourState$: Observable<'STARTING' | 'RUNNING' | 'COMPLETED'>;
+  tourState$: Observable<TourStateEnum>;
 
   constructor(private http: HttpClient, private store: Store) {
+    this.tourLoadStatus$ = this.store.select(selectTourLoadStatus).pipe();
     this.allQuestions$ = this.store.select(selectAllQuestions).pipe(filter(questions => !!questions.length));
     this.currentQuestion$ = this.store.select(selectCurrentQuestion).pipe(distinctUntilChanged());
-    this.tourState$ = this.store.select(selectQuestionCounters)
-      .pipe(
-        distinctUntilChanged(),
-        // TODO change location for map to selector
-        map(({total, current}) =>
-          (current > 0) ? ((current < total) ? 'RUNNING' : 'COMPLETED') : 'STARTING')
-      );
+    this.tourState$ = this.store.select(selectTourState).pipe();
   }
 
   public loadTour() {

@@ -28,11 +28,16 @@ export const findNextQuestion = createAction(
   '[Tour] Find Next Question'
 );
 
+export const tourCompleted = createAction((
+  '[Tour] Tour Completed'
+));
+
 export const tourActions = {
   initializeTour,
   loadTour,
   loadTourSuccess,
   loadTourFailure,
   storeFirstQuestion,
-  findNextQuestion
+  findNextQuestion,
+  tourCompleted
 };
