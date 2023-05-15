@@ -19,7 +19,7 @@ export class QuestionService {
   tourState$: Observable<TourStateEnum>;
 
   constructor(private http: HttpClient, private store: Store) {
-    this.tourLoadStatus$ = this.store.select(selectTourLoadStatus).pipe();
+    this.tourLoadStatus$ = this.store.select(selectTourLoadStatus);
     this.allQuestions$ = this.store.select(selectAllQuestions).pipe(filter(questions => !!questions.length));
     this.currentQuestion$ = this.store.select(selectCurrentQuestion).pipe(distinctUntilChanged());
     this.tourState$ = this.store.select(selectTourState).pipe();
@@ -43,14 +43,13 @@ export class QuestionService {
       tap(questions => {
         for (const question of questions) {
           distance = curPos.distanceTo(question.latLng);
-          console.log(distance);
           if (distance < smallestDistance) {
             smallestDistance = distance;
             closestQuestion = question;
           }
         }
 
-        this.store.dispatch(tourActions.storeFirstQuestion({question: closestQuestion}));
+        this.store.dispatch(tourActions.storeCurrentQuestion({question: closestQuestion}));
       })).subscribe();
   }
 

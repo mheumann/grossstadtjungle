@@ -6,9 +6,11 @@ import {Capacitor} from '@capacitor/core';
 import {Geolocation, PermissionStatus} from '@capacitor/geolocation';
 import {QuestionService} from '../../services/question.service';
 import {CenterControl} from '../../components/center-control';
-import {filter, takeUntil, tap} from 'rxjs/operators';
+import {filter, takeUntil, takeWhile, tap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {TourStateEnum} from '../../enums/tour-state-enum';
+import {TourLoadStatusEnum} from '../../enums/tour-load-status-enum';
+import {Question} from '../../models/question';
 
 @Component({
   selector: 'app-map',
@@ -68,8 +70,11 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.destroy$.next(true);
   }
 
-  private startLocating() {
+  private async startLocating() {
     const options: L.LocateOptions = {watch: true, enableHighAccuracy: true};
+
+    const loading = await this.loadingCtrl.create({message: 'Loading questions'});
+    await loading.present();
 
     this.map.locate(options);
     this.map.on('locationfound', this.positionFound);
@@ -152,9 +157,14 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.centering = false;
   };
 
-  private initializePlayground = (e: L.LocationEvent) => {
+  private initializePlayground = async (e: L.LocationEvent) => {
     const userLatLng = (Capacitor.isNativePlatform()) ? e.latlng : L.latLng(MapPage.userPos);
     this.startCentering();
+
+    this.questionProvider.tourLoadStatus$.pipe(
+      filter(state => state === TourLoadStatusEnum.loading),
+      takeWhile(state => state === TourLoadStatusEnum.loading)
+    ).subscribe();
 
     this.questionProvider.currentQuestion$.pipe(
       takeUntil(this.destroy$),
@@ -164,12 +174,15 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
         }
       }),
       filter(question => !!question)
-    ).subscribe(question => {
-      this.questionMarker.setLatLng(question.latLng);
-      this.questionMarker.setOpacity(1);
-      this.handlePositionChange2Marker(userLatLng);
-    });
+    ).subscribe(question => this.handleCurrentQuestion(question, userLatLng));
   };
+
+  private handleCurrentQuestion(question: Question, userLatLng: LatLng) {
+    this.questionMarker.setLatLng(question.latLng);
+    this.questionMarker.setOpacity(1);
+    this.handlePositionChange2Marker(userLatLng);
+    this.loadingCtrl.getTop().then(loading => loading.dismiss());
+  }
 
   private handlePositionChange2Marker(userLatLng: LatLng): void {
     const questionLatLng = this.questionMarker.getLatLng();

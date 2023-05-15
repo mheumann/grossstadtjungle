@@ -24,7 +24,7 @@ export const tourReducer = createReducer<TourState>(
       const nextQuestion = state.allQuestions.find(question => question.id === Number(state.currentQuestion.nextId));
       return {...state, currentQuestion: nextQuestion, answeredQuestionCount};
     }),
-    on(tourActions.storeFirstQuestion, (state, {question}): TourState => ({
+    on(tourActions.storeCurrentQuestion, (state, {question}): TourState => ({
       ...state,
       currentQuestion: question,
       firstQuestionId: question.id

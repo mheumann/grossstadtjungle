@@ -19,7 +19,7 @@ export const loadTourFailure = createAction(
   props<{ error: any }>()
 );
 
-export const storeFirstQuestion = createAction(
+export const storeCurrentQuestion = createAction(
   '[Tour] Store Current Question',
   props<{ question: Question }>()
 );
@@ -37,7 +37,7 @@ export const tourActions = {
   loadTour,
   loadTourSuccess,
   loadTourFailure,
-  storeFirstQuestion,
+  storeCurrentQuestion,
   findNextQuestion,
   tourCompleted
 };

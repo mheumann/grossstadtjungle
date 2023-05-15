@@ -16,6 +16,8 @@ import {reducers, metaReducers} from './store/reducers';
 import { EffectsModule } from '@ngrx/effects';
 import { TourEffects } from './store/effects/tour.effects';
 import {HttpClientModule} from '@angular/common/http';
+import {environment} from '../environments/environment';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [AppComponent, MapPage, QuestionPage],
@@ -30,6 +32,7 @@ import {HttpClientModule} from '@angular/common/http';
     StoreModule.forRoot(reducers, {
       metaReducers
     }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([TourEffects])
   ],
   providers: [{provide: RouteReuseStrategy, useClass: IonicRouteStrategy}],
