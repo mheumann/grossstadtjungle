@@ -43,18 +43,8 @@ export class QuestionPage implements OnDestroy {
   }
 
   async backToMap(): Promise<void> {
-    // TODO: if tour completed
-    if (this.answer === 'test1000') {
-      const alert = await this.alertCtrl.create({
-        header: 'Glückwunsch',
-        subHeader: 'Du hast alle Fragen richtig beantwortet und hoffentlich einen guten Überblick über die Stadt bekommen.',
-        buttons: ['Ok']
-      });
-      alert.present().then(() => this.navCtrl.navigateBack('map'));
-    } else {
-      this.questionService.setNextQuestion();
-      await this.navCtrl.navigateBack('map');
-    }
+    this.questionService.setNextQuestion();
+    await this.navCtrl.navigateBack('map');
   }
 
   ngOnDestroy(): void {
