@@ -30,4 +30,12 @@
 .leaflet-control-center-btn {
   font-size: 22px;
   padding: 4px;
+
+  ion-icon {
+    opacity: 0.5;
+
+    &.gsj-active {
+      opacity: 1;
+    }
+  }
 }

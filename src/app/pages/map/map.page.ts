@@ -25,6 +25,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   private posCircle: Circle;
   private posMarker: Marker;
   private questionMarker: Marker;
+  private centerControl: CenterControl;
   private centering: boolean;
   private destroy$ = new Subject();
 
@@ -42,9 +43,9 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
       maxZoom: 19
     }).addTo(this.map);
 
-    const centerControl = new CenterControl({position: 'bottomright'});
-    centerControl.addTo(this.map);
-    L.DomEvent.on(centerControl.getContainer(), {click: this.startCentering});
+    this.centerControl = new CenterControl({position: 'bottomright'});
+    this.centerControl.addTo(this.map);
+    L.DomEvent.on(this.centerControl.getContainer(), {click: this.startCentering});
 
     this.questionMarker = L.marker([0, 0],
       {icon: questionMarkerIcon, opacity: 0, zIndexOffset: 999})
@@ -54,7 +55,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   }
 
   ionViewDidEnter(): void {
-    this.map.setView(MapPage.userPos, 13);
+    this.map.setView(MapPage.userPos, DEFAULT_ZOOM);
 
     if (Capacitor.isNativePlatform()) {
       Geolocation.checkPermissions().then(this.handlePermissionStatus);
@@ -93,7 +94,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     }
 
     if (this.centering) {
-      this.map.setView(this.latLng, DEFAULT_ZOOM);
+      this.map.setView(this.latLng, this.map.getZoom());
     }
 
     this.handlePositionChange2Marker(userLatLng);
@@ -147,14 +148,16 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
 
   private startCentering = () => {
     if (this.latLng !== undefined) {
-      this.map.setView(this.latLng, DEFAULT_ZOOM);
+      this.map.setView(this.latLng, DEFAULT_ZOOM, {easeLinearity: 0.9, animate: true});
       this.map.once('dragstart zoomstart', this.stopCentering);
     }
     this.centering = true;
+    this.toggleActiveCenterControl();
   };
 
   private stopCentering = () => {
     this.centering = false;
+    this.toggleActiveCenterControl();
   };
 
   private initializePlayground = async (e: L.LocationEvent) => {
@@ -196,6 +199,10 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
       this.questionMarker.off('click');
     }
   };
+
+  private toggleActiveCenterControl() {
+    return this.centerControl.getContainer().querySelector('ion-icon').classList.toggle('gsj-active');
+  }
 }
 
 const questionMarkerIcon = L.icon({
@@ -214,4 +221,4 @@ const questionMarkerAnimated = L.icon({
   className: 'questionMarkerAnimated'
 });
 
-const DEFAULT_ZOOM = 16;
+const DEFAULT_ZOOM = 17;
