@@ -1,5 +1,7 @@
 {
   "name": "grossstadtjungle",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
