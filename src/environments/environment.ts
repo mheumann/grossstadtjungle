@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  mapTileUrl: 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+  mapTileUrl: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
 };
 
 /*
