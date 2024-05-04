@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  mapTileUrl: 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
 };
 
 /*

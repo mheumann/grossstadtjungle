@@ -11,6 +11,7 @@ import {Subject} from 'rxjs';
 import {TourStateEnum} from '../../enums/tour-state-enum';
 import {TourLoadStatusEnum} from '../../enums/tour-load-status-enum';
 import {Question} from '../../models/question';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-map',
@@ -37,9 +38,9 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
 
   ngOnInit(): void {
     this.map = L.map('map');
-    this.tileLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
-        ' &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    this.tileLayer = L.tileLayer(environment.mapTileUrl, {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' +
+        ' &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
       maxZoom: 19
     }).addTo(this.map);
 
