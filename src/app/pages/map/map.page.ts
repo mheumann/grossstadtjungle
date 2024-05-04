@@ -131,11 +131,15 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   private handlePermissionStatus = (status: PermissionStatus) => {
     switch (status.location) {
       case 'prompt' || 'prompt-with-rationale':
+        console.log(status);
         Geolocation.requestPermissions({permissions: ['location']}).then(this.handleGeolocationStatus);
         break;
       case 'granted':
-      default:
         this.handleGeolocationStatus(status);
+        break;
+      case "denied":
+      default:
+        Geolocation.requestPermissions({permissions: ['location']}).then(this.handlePermissionStatus);
     }
   };
 
