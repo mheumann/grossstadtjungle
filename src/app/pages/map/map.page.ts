@@ -1,17 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {Circle, LatLng, LatLngTuple, Map, Marker, TileLayer} from 'leaflet';
-import {AlertController, LoadingController, NavController, ViewDidEnter, ViewDidLeave} from '@ionic/angular';
+import {AlertController, ViewDidEnter, ViewDidLeave} from '@ionic/angular';
 import {Capacitor} from '@capacitor/core';
-import {Geolocation, PermissionStatus} from '@capacitor/geolocation';
 import {QuestionService} from '../../services/question.service';
 import {CenterControl} from '../../components/center-control';
-import {filter, takeUntil, takeWhile, tap} from 'rxjs/operators';
+import {filter, take, takeUntil, tap} from 'rxjs/operators';
 import {Subject} from 'rxjs';
 import {TourStateEnum} from '../../enums/tour-state-enum';
-import {TourLoadStatusEnum} from '../../enums/tour-load-status-enum';
 import {Question} from '../../models/question';
 import {environment} from '../../../environments/environment';
+import {Router} from "@angular/router";
+import {PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'app-map',
@@ -30,8 +30,8 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   private centering: boolean;
   private destroy$ = new Subject();
 
-  constructor(private navCtrl: NavController,
-              private loadingCtrl: LoadingController,
+  constructor(private router: Router,
+              private permissionService: PermissionService,
               private questionProvider: QuestionService,
               private alertCtrl: AlertController) {
   }
@@ -59,28 +59,35 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.map.setView(MapPage.userPos, DEFAULT_ZOOM);
 
     if (Capacitor.isNativePlatform()) {
-      Geolocation.checkPermissions().then(this.handlePermissionStatus);
+      this.permissionService.checkGeolocationPermission().pipe(take(1)).subscribe((granted) => {
+        if (granted) {
+          this.startLocating();
+        }
+      });
     } else {
       this.questionProvider.tourState$.pipe(
         takeUntil(this.destroy$),
         tap(state => state === TourStateEnum.completed ? this.handleTourComplete() : this.startLocating())
       ).subscribe();
     }
+
+    this.questionProvider.currentQuestion$.pipe(
+      takeUntil(this.destroy$),
+      filter(question => !!question)
+    ).subscribe(question => this.drawQuestionMarker(question));
   }
 
   ionViewDidLeave(): void {
     this.destroy$.next(true);
   }
 
-  private async startLocating() {
+  private startLocating() {
     const options: L.LocateOptions = {watch: true, enableHighAccuracy: true};
-
-    const loading = await this.loadingCtrl.create({message: 'Loading questions'});
-    await loading.present();
 
     this.map.locate(options);
     this.map.on('locationfound', this.positionFound);
-    this.map.once('locationfound', this.initializePlayground);
+
+    this.initializePlayground();
   }
 
   private positionFound = (e: L.LocationEvent) => {
@@ -97,7 +104,6 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     if (this.centering) {
       this.map.setView(this.latLng, this.map.getZoom());
     }
-
     this.handlePositionChange2Marker(userLatLng);
   };
 
@@ -117,7 +123,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
       this.posMarker = L.marker(this.latLng, {icon: new L.Icon.Default({imagePath: '/assets/leaflet/'})});
       this.posMarker.addTo(this.map);
 
-      this.posCircle = L.circle(this.latLng, radius);
+      this.posCircle = L.circle(this.latLng, {radius});
       this.posCircle.addTo(this.map);
 
       this.map.setView(this.latLng, this.map.getZoom());
@@ -127,29 +133,6 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.posCircle.setLatLng(this.latLng);
     this.posCircle.setRadius(radius);
   }
-
-  private handlePermissionStatus = (status: PermissionStatus) => {
-    switch (status.location) {
-      case 'prompt' || 'prompt-with-rationale':
-        console.log(status);
-        Geolocation.requestPermissions({permissions: ['location']}).then(this.handleGeolocationStatus);
-        break;
-      case 'granted':
-        this.handleGeolocationStatus(status);
-        break;
-      case "denied":
-      default:
-        Geolocation.requestPermissions({permissions: ['location']}).then(this.handlePermissionStatus);
-    }
-  };
-
-  private handleGeolocationStatus = (status: PermissionStatus) => {
-    if (status.location === 'granted') {
-      this.startLocating();
-    } else {
-      alert('Du musst der App Zugriff auf deinen Standort geben!');
-    }
-  };
 
   private startCentering = () => {
     if (this.latLng !== undefined) {
@@ -165,31 +148,24 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     this.toggleActiveCenterControl();
   };
 
-  private initializePlayground = async (e: L.LocationEvent) => {
-    const userLatLng = (Capacitor.isNativePlatform()) ? e.latlng : L.latLng(MapPage.userPos);
+  private initializePlayground(): void {
     this.startCentering();
 
-    this.questionProvider.tourLoadStatus$.pipe(
-      filter(state => state === TourLoadStatusEnum.loading),
-      takeWhile(state => state === TourLoadStatusEnum.loading)
-    ).subscribe();
-
     this.questionProvider.currentQuestion$.pipe(
-      takeUntil(this.destroy$),
-      tap(question => {
-        if (!question) {
-          this.questionProvider.calculateClosestQuestion(userLatLng);
-        }
-      }),
-      filter(question => !!question)
-    ).subscribe(question => this.handleCurrentQuestion(question, userLatLng));
+      take(1),
+      filter(question => !question)
+    ).subscribe(() =>
+      this.map.once('locationfound', (e: L.LocationEvent) => this.questionProvider.calculateClosestQuestion(
+        (Capacitor.isNativePlatform()) ? e.latlng : L.latLng(MapPage.userPos))
+      )
+    );
   };
 
-  private handleCurrentQuestion(question: Question, userLatLng: LatLng) {
+  private drawQuestionMarker(question: Question) {
+    this.questionMarker.setIcon(questionMarkerIcon);
     this.questionMarker.setLatLng(question.latLng);
+    this.questionMarker.off('click');
     this.questionMarker.setOpacity(1);
-    this.handlePositionChange2Marker(userLatLng);
-    this.loadingCtrl.getTop().then(loading => loading.dismiss());
   }
 
   private handlePositionChange2Marker(userLatLng: LatLng): void {
@@ -198,7 +174,7 @@ export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
     const distance2user = this.map.distance(userLatLng, questionLatLng);
     if (distance2user < 10) {
       this.questionMarker.setIcon(questionMarkerAnimated);
-      this.questionMarker.on('click', () => this.navCtrl.navigateForward('question'));
+      this.questionMarker.on('click', () => this.router.navigate(['/question']));
     } else {
       this.questionMarker.setIcon(questionMarkerIcon);
       this.questionMarker.off('click');
