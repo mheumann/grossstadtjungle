@@ -1,38 +1,41 @@
-import { NgModule, ErrorHandler } from '@angular/core';
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { IonicStorageModule } from '@ionic/storage';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { StatusBar } from '@ionic-native/status-bar'
-import { MyApp } from './app.component';
-import { MapPage } from '../pages/map-page/map-page';
-import { MapProvider} from '../providers/map-provider';
-import { QuestionProvider} from '../providers/question-provider';
-import { QuestionPage } from '../pages/question-page/question-page';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {BrowserModule} from '@angular/platform-browser';
+import {RouteReuseStrategy} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+
+import {IonicModule, IonicRouteStrategy} from '@ionic/angular';
+
+import {StoreModule} from '@ngrx/store';
+
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {MapPage} from './pages/map/map.page';
+import {QuestionPage} from './pages/question/question.page';
+import {reducers, metaReducers} from './store/reducers';
+import { EffectsModule } from '@ngrx/effects';
+import { TourEffects } from './store/effects/tour.effects';
+import {HttpClientModule} from '@angular/common/http';
+import {environment} from '../environments/environment';
+import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 
 @NgModule({
-    declarations: [
-        MyApp,
-        MapPage,
-        QuestionPage
-    ],
+    declarations: [AppComponent, MapPage, QuestionPage],
     imports: [
+        CommonModule,
         BrowserModule,
-        IonicModule.forRoot(MyApp),
-        IonicStorageModule.forRoot()
+        IonicModule.forRoot(),
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        StoreModule.forRoot(reducers, {
+            metaReducers
+        }),
+        !environment.production ? StoreDevtoolsModule.instrument() : [],
+        EffectsModule.forRoot([TourEffects])
     ],
-    bootstrap: [IonicApp],
-    entryComponents: [
-        MyApp,
-        MapPage,
-        QuestionPage
-    ],
-    providers: [
-        {provide: ErrorHandler, useClass: IonicErrorHandler},
-        Diagnostic,
-        StatusBar,
-        MapProvider,
-        QuestionProvider
-    ]
+    providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+    bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Großstadtjungle</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-container *ngIf="!answered">
+    <div class="ion-padding-horizontal">
+      <h2>Frage - {{ question?.place }}</h2>
+      <p>{{ question?.intro }}</p>
+      <p>{{ question?.question }}</p>
+    </div>
+
+    <ion-text *ngIf="errorMessage !== ''" class="ion-padding-horizontal" color="danger">{{ errorMessage }}</ion-text>
+
+    <ion-list inset="true">
+      <ion-item>
+        <ion-input type="text" placeholder="Antwort" [(ngModel)]="answer" name="answer"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div class="ion-padding-horizontal">
+      <ion-button *ngIf="attempts > 2" (click)="showHint()"><ion-icon name="help-circle" slot="left"></ion-icon> Tipp erhalten</ion-button>
+      <ion-button (click)="checkAnswer()">Weiter <ion-icon name="arrow-forward" slot="right"></ion-icon></ion-button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="answered">
+    <div class="ion-padding-horizontal">
+      <h2>Trivia</h2>
+      <p>{{ question?.trivia }}</p>
+      <div>
+        <ion-button (click)="backToMap()"><ion-icon name="map" slot="left"></ion-icon> Zurück zur Map</ion-button>
+      </div>
+    </div>
+  </ng-container>
+</ion-content>

@@ -1,8 +1,7 @@
 {
-  "name": "Grossstadtjungle",
-  "app_id": "",
+  "name": "grossstadtjungle",
   "integrations": {
-    "cordova": {}
+    "capacitor": {}
   },
-  "type": "ionic-angular"
+  "type": "angular"
 }
