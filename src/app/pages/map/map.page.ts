@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import * as L from 'leaflet';
 import {Circle, LatLng, LatLngTuple, Map, Marker, TileLayer} from 'leaflet';
-import {AlertController, ViewDidEnter, ViewDidLeave} from '@ionic/angular';
+import { AlertController, ViewDidEnter, ViewDidLeave, IonicModule } from '@ionic/angular';
 import {Capacitor} from '@capacitor/core';
 import {QuestionService} from '../../services/question.service';
 import {CenterControl} from '../../components/center-control';
@@ -14,9 +14,11 @@ import {Router} from "@angular/router";
 import {PermissionService} from "../../services/permission.service";
 
 @Component({
-  selector: 'app-map',
-  templateUrl: './map.page.html',
-  styleUrls: ['./map.page.scss'],
+    selector: 'app-map',
+    templateUrl: './map.page.html',
+    styleUrls: ['./map.page.scss'],
+    standalone: true,
+    imports: [IonicModule],
 })
 export class MapPage implements OnInit, ViewDidEnter, ViewDidLeave {
   public static userPos: LatLngTuple = [49.486409, 8.462112];

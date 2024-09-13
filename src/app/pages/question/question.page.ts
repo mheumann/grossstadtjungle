@@ -1,12 +1,16 @@
 import {Component, OnDestroy} from '@angular/core';
-import {AlertController, NavController} from '@ionic/angular';
+import { AlertController, NavController, IonicModule } from '@ionic/angular';
 import {Question} from '../../models/question';
 import {QuestionService} from '../../services/question.service';
 import {Subscription} from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 @Component({
-  templateUrl: './question.page.html',
-  styleUrls: ['question.page.scss']
+    templateUrl: './question.page.html',
+    styleUrls: ['question.page.scss'],
+    standalone: true,
+    imports: [IonicModule, NgIf, FormsModule]
 })
 export class QuestionPage implements OnDestroy {
   question: Question;
