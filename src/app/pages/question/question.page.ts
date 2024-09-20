@@ -1,18 +1,18 @@
-import {Component, OnDestroy} from '@angular/core';
-import { AlertController, NavController, IonicModule } from '@ionic/angular';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AlertController, NavController, IonicModule} from '@ionic/angular';
 import {Question} from '../../models/question';
 import {QuestionService} from '../../services/question.service';
 import {Subscription} from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {NgIf} from '@angular/common';
 
 @Component({
-    templateUrl: './question.page.html',
-    styleUrls: ['question.page.scss'],
-    standalone: true,
-    imports: [IonicModule, NgIf, FormsModule]
+  templateUrl: './question.page.html',
+  styleUrls: ['question.page.scss'],
+  standalone: true,
+  imports: [IonicModule, NgIf, FormsModule]
 })
-export class QuestionPage implements OnDestroy {
+export class QuestionPage implements OnInit, OnDestroy {
   question: Question;
   answer = '';
   answered = false;
@@ -25,6 +25,9 @@ export class QuestionPage implements OnDestroy {
     private questionService: QuestionService,
     private alertCtrl: AlertController
   ) {
+  }
+
+  ngOnInit(): void {
     this.questionSubscription = this.questionService.currentQuestion$.subscribe(question => this.question = question);
   }
 

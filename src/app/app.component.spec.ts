@@ -1,16 +1,23 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
+import {TestBed, waitForAsync} from '@angular/core/testing';
 
-import { AppComponent } from './app.component';
+import {AppComponent} from './app.component';
+import {provideRouter} from "@angular/router";
 
 describe('AppComponent', () => {
 
   beforeEach(waitForAsync(() => {
 
     TestBed.configureTestingModule({
-    imports: [AppComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-}).compileComponents();
+      imports: [AppComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      providers: [provideRouter([
+        {
+          path: '',
+          pathMatch: 'full',
+          redirectTo: 'map'
+        }])]
+    }).compileComponents();
   }));
 
   it('should create the app', () => {
